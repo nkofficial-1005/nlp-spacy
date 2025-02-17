@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - develop
+      - feature/ci-setup
 
 jobs:
   build:
@@ -26,7 +28,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t kohlin/nlp-project:latest .
+        docker build -t kohlin/nlp-spacy:latest .
 
     - name: Push Docker image
       env:
