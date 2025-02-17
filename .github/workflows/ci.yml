@@ -19,9 +19,6 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
-
       - name: Run Tests
         run: python -m unittest discover -s tests || echo "No tests found"
 
@@ -45,6 +42,8 @@ jobs:
           git fetch origin
           git checkout develop
           git merge --no-ff "${{ github.ref }}"
+          # Update remote URL to use GITHUB_TOKEN for pushing:
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin develop
 
   merge-to-main:
@@ -67,6 +66,8 @@ jobs:
           git fetch origin
           git checkout main
           git merge --no-ff origin/develop
+          # Update remote URL to use GITHUB_TOKEN for pushing:
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push origin main
 
   docker-build:
