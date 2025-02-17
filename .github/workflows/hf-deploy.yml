@@ -21,10 +21,10 @@ jobs:
       - name: Clone Hugging Face Space Repository
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_REPO: kohlin/nlp-spacy  # <-- Replace with your Hugging Face Space repo name.
+          HF_REPO: kohlin/nlp-spacy  # Replace with your Hugging Face Space repo name.
         run: |
           # Clone the HF space repo into a folder named "space-repo"
-          git clone https://$HF_TOKEN@huggingface.co/${HF_REPO} space-repo
+          git clone https://${HF_TOKEN}@huggingface.co/${HF_REPO}.git space-repo
 
       - name: Copy Files to Hugging Face Space Repo
         run: |
@@ -39,4 +39,4 @@ jobs:
           cd space-repo
           git add .
           git commit -m "Deploy updated app from GitHub Actions" || echo "No changes to commit"
-          git push https://$HF_TOKEN@huggingface.co/${HF_REPO}.git
+          git push https://${HF_TOKEN}@huggingface.co/${HF_REPO}.git
