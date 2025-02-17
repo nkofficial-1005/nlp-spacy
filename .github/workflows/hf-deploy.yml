@@ -1,6 +1,5 @@
 name: Deploy to Hugging Face Spaces
 
-# Trigger this workflow on pushes to the main branch.
 on:
   push:
     branches:
@@ -18,25 +17,28 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Clone Hugging Face Space Repository
+      - name: Setup .netrc for Hugging Face Authentication
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          HF_REPO: kohlin/nlp-spacy  # Replace with your Hugging Face Space repo name.
         run: |
-          # Clone the HF space repo into a folder named "space-repo"
-          git clone https://${HF_TOKEN}:@huggingface.co/${HF_REPO}.git space-repo
+          echo "machine huggingface.co login ${HF_TOKEN} password x" > ~/.netrc
+          chmod 600 ~/.netrc
+
+      - name: Clone Hugging Face Space Repository
+        env:
+          HF_REPO: kohlin/nlp-spacy  # Replace with your Hugging Face Space repository name.
+        run: |
+          git clone https://huggingface.co/${HF_REPO}.git space-repo
 
       - name: Copy Files to Hugging Face Space Repo
         run: |
-          # Copy all files from the current repo into the space repo folder (excluding .git)
           rsync -av --exclude='.git' ./ space-repo/
 
       - name: Commit and Push Changes to Hugging Face Space
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_REPO: kohlin/nlp-spacy
         run: |
           cd space-repo
           git add .
           git commit -m "Deploy updated app from GitHub Actions" || echo "No changes to commit"
-          git push https://${HF_TOKEN}:@huggingface.co/${HF_REPO}.git
+          git push https://huggingface.co/${HF_REPO}.git
